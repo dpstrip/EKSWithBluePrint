@@ -23,6 +23,8 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as eks from 'aws-cdk-lib/aws-eks';
 
 const app = new cdk.App();
 
@@ -41,14 +43,27 @@ const addOns: Array<blueprints.ClusterAddOn> = [
    // new blueprints.addons.XrayAddOn()
 ];
 
+
+const props: blueprints.MngClusterProviderProps = {
+    minSize: 1,
+    maxSize: 10,
+    desiredSize: 4,    
+    instanceTypes: [new ec2.InstanceType('m5.large')],
+    amiType: eks.NodegroupAmiType.AL2023_X86_64_STANDARD,
+    nodeGroupCapacityType: eks.CapacityType.ON_DEMAND,
+    amiReleaseVersion: "1.30.0-20240615" // this will upgrade kubelet to 1.30.0
+};
+
 const account = '929556976395';
 const region = 'us-east-1';
 const version = 'auto';
 
-const stack = blueprints.EksBlueprint.builder()
-    .account(account)
-    .region(region)
-    .version(version)
-    .addOns(...addOns)
-    .build(app, 'eks-blueprint');
+// const stack = blueprints.EksBlueprint.builder()
+//     .account(account)
+//     .region(region)
+//     .version(version)
+//     .addOns(...addOns)
+//     .build(app, 'eks-blueprint');
 // do something with stack or drop this variable
+const clusterProvider = new blueprints.MngClusterProvider(props);
+new blueprints.EksBlueprint(app, { id: 'blueprint-1', addOns, teams: [], clusterProvider, version: eks.KubernetesVersion.V1_30 });
