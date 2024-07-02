@@ -45,14 +45,11 @@ const addOns: Array<blueprints.ClusterAddOn> = [
 
 
 const props: blueprints.MngClusterProviderProps = {
+    version: eks.KubernetesVersion.V1_29,
     minSize: 1,
-    maxSize: 10,
-    desiredSize: 4,    
+    maxSize: 2,
     instanceTypes: [new ec2.InstanceType('m5.large')],
-    amiType: eks.NodegroupAmiType.AL2023_X86_64_STANDARD,
-    nodeGroupCapacityType: eks.CapacityType.ON_DEMAND,
-    amiReleaseVersion: "1.30.0-20240615" // this will upgrade kubelet to 1.30.0
-};
+  }
 
 const account = '929556976395';
 const region = 'us-east-1';
@@ -66,4 +63,4 @@ const version = 'auto';
 //     .build(app, 'eks-blueprint');
 // do something with stack or drop this variable
 const clusterProvider = new blueprints.MngClusterProvider(props);
-new blueprints.EksBlueprint(app, { id: 'blueprint-1', addOns, teams: [], clusterProvider, version: eks.KubernetesVersion.V1_30 });
+new blueprints.EksBlueprint(app, { id: 'blueprint-1', addOns, teams: [], clusterProvider, version: eks.KubernetesVersion.V1_29 });
